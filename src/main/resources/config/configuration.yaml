@@ -1,7 +1,0 @@
-db:
-  username: "root"
-  password: "Mule"
-  database: "mule"
-  host: "localhost"
-  port: "3306"
-  
