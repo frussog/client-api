@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
     <http:listener-config name="client-revamp-service-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8086" />
     </http:listener-config>
-    <apikit:config name="client-revamp-service-api-config" api="resource::f8150fb0-932d-4808-be99-3847b15fd4a0:client-revamp-service-api:1.0.0:raml:zip:client-revamp-service-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="client-revamp-service-api-config" api="resource::f8150fb0-932d-4808-be99-3847b15fd4a0:client-revamp-service-api:1.0.2:raml:zip:client-revamp-service-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <configuration-properties doc:name="Configuration properties" doc:id="e72cd408-6807-42f0-ab67-1ed83ccb32cf" file="config\configuration.yaml" />
-	<db:config name="RetailRevampDB" doc:name="Database Config" doc:id="bfdf6106-8db1-402d-8f48-8758f7f73048" >
-		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${db.password}" database="${db.database}"/>
-	</db:config>
-	<flow name="client-revamp-service-api-main">
+    <db:config name="RetailRevampDB" doc:name="Database Config" doc:id="bfdf6106-8db1-402d-8f48-8758f7f73048">
+        <db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${db.password}" database="${db.database}" />
+    </db:config>
+    <flow name="client-revamp-service-api-main">
         <http:listener config-ref="client-revamp-service-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -130,24 +129,9 @@ output application/json
     </flow>
     <flow name="get:\clients:client-revamp-service-api-config">
         <db:select doc:name="Retrieve clients" doc:id="f2c96273-6b0b-45d1-ab06-9e8873509fa7" config-ref="RetailRevampDB">
-			<db:sql ><![CDATA[SELECT * FROM
+            <db:sql><![CDATA[SELECT * FROM
 mule.clients]]></db:sql>
-		</db:select>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="get:\balance\(ID):client-revamp-service-api-config">
-        <db:select doc:name="Retrieve balance by ID" doc:id="383ec176-5c47-44d1-970d-74c15b906a99" config-ref="RetailRevampDB">
-			<db:sql ><![CDATA[SELECT * FROM mule.balance
-WHERE clientId =:clientId]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'clientId' : attributes.uriParams.ID}]]]></db:input-parameters>
-		</db:select>
+        </db:select>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -159,10 +143,10 @@ payload]]></ee:set-payload>
     </flow>
     <flow name="get:\clients\(ID):client-revamp-service-api-config">
         <db:select doc:name="Retrieve client by ID" doc:id="b60e1813-3748-43c0-8601-e1d6f05802ef" config-ref="RetailRevampDB">
-			<db:sql ><![CDATA[SELECT * FROM mule.clients
+            <db:sql><![CDATA[SELECT * FROM mule.clients
 WHERE clientId = :clientId]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'clientId' : attributes.uriParams.ID}]]]></db:input-parameters>
-		</db:select>
+            <db:input-parameters><![CDATA[#[{'clientId' : attributes.uriParams.ID}]]]></db:input-parameters>
+        </db:select>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
