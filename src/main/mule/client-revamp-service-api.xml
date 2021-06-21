@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <http:listener-config name="client-revamp-service-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
@@ -8,7 +9,9 @@
     <salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="849f3f73-c7b2-4d32-8f28-3097a952791b">
         <salesforce:basic-connection username="${sfdc.username}" password="${sfdc.password}" securityToken="${sfdc.securityToken}" />
     </salesforce:sfdc-config>
-    <flow name="client-revamp-service-api-main">
+    <global-property doc:name="Global Property" doc:id="adaac1c4-e2a1-4920-9839-5f18cfbd8354" name="env" value="Sandbox" />
+	<configuration-properties doc:name="Configuration properties" doc:id="47be0f59-fc04-40d8-94e8-5c53543f7548" file="${env}-properties.yaml" />
+	<flow name="client-revamp-service-api-main">
         <http:listener config-ref="client-revamp-service-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -145,13 +148,18 @@ payload map (item, indexOf) ->
         </ee:transform>
     </flow>
     <flow name="get:\clients\(ID):client-revamp-service-api-config">
-        <salesforce:query doc:name="Get Client By ID" doc:id="cc7eaf00-8628-499c-a075-a1920aadb082" config-ref="Salesforce_Config">
-            <salesforce:salesforce-query><![CDATA[SELECT Id, Name FROM Contact WHERE Id = ':id']]></salesforce:salesforce-query>
-            <salesforce:parameters><![CDATA[#[output application/java
+        <ee:transform doc:name="Map Client By ID" doc:id="a7cbbec7-e444-40c8-991f-1d74d75e9a39" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output application/java
 ---
 {
 	"id" : attributes.uriParams.ID
-}]]]></salesforce:parameters>
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:query doc:name="Get Client By ID" doc:id="cc7eaf00-8628-499c-a075-a1920aadb082" config-ref="Salesforce_Config">
+            <salesforce:salesforce-query><![CDATA[SELECT Id, Name FROM Contact WHERE Id = ':id']]></salesforce:salesforce-query>
+            <salesforce:parameters><![CDATA[#[payload]]]></salesforce:parameters>
         </salesforce:query>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>

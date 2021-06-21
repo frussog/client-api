@@ -15,6 +15,7 @@
 
 		<app.runtime>4.3.0-20210427</app.runtime>
 		<mule.maven.plugin.version>3.5.1</mule.maven.plugin.version>
+		<env>sandbox</env>
 	</properties>
 
 	<build>
@@ -30,6 +31,16 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+					<classifier>mule-application</classifier>
+					<armDeployment>
+						<muleVersion>${app.runtime}</muleVersion>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<target>${target}</target>
+						<targetType>${target.type}</targetType>
+						<username>${username}</username>
+						<password>${password}</password>
+						<environment>${environment}</environment>
+					</armDeployment>
 					<sharedLibraries>
 						<sharedLibrary>
 							<groupId>mysql</groupId>
@@ -110,6 +121,10 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</pluginRepository>
+  	    <pluginRepository>
+		  <id>mule-public</id>
+		  <url>https://repository.mulesoft.org/nexus/content/repositories/releases</url>
 		</pluginRepository>
 	</pluginRepositories>
 
