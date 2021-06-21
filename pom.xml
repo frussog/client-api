@@ -31,22 +31,19 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<classifier>mule-application</classifier>
-					<armDeployment>
-						<muleVersion>${app.runtime}</muleVersion>
-						<uri>https://anypoint.mulesoft.com</uri>
-						<target>${target}</target>
-						<targetType>${target.type}</targetType>
-						<username>${username}</username>
-						<password>${password}</password>
-						<environment>${environment}</environment>
-					</armDeployment>
-					<sharedLibraries>
-						<sharedLibrary>
-							<groupId>mysql</groupId>
-							<artifactId>mysql-connector-java</artifactId>
-						</sharedLibrary>
-					</sharedLibraries>
+					<cloudHubDeployment>
+    				<uri>https://anypoint.mulesoft.com</uri>
+    				<muleVersion>${mule.version}</muleVersion>
+    				<!-- Deploy User Parameter -->
+    				<username>${anypoint.username}</username>
+    				<password>${anypoint.password}</password>
+    				<!-- Environment Parameter -->
+    				<environment>${cloudhub.environment}</environment>
+    				<applicationName>${cloudhub.app}</applicationName>
+    				<businessGroup>${cloudhub.bg}</businessGroup>
+    				<workerType>${cloudhub.worker}</workerType>
+    				<objectStoreV2>true</objectStoreV2>
+					</cloudHubDeployment>				
 				</configuration>
 			</plugin>
 		</plugins>
@@ -76,11 +73,6 @@
 			<artifactId>mule-db-connector</artifactId>
 			<version>1.9.3</version>
 			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.48</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mulesoft.connectors</groupId>
