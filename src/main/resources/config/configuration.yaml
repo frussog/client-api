@@ -1,0 +1,14 @@
+db:
+  username: "root"
+  password: "Mule"
+  database: "mule"
+  host: "localhost"
+  port: "3306"
+  
+sfdc:
+  username: "fer@russo.com"
+  password: "wC.1;XC5~9w!D+5<"
+  securityToken: "VhFrYnzNh55gT3ddAebppeuri"
+  
+http:
+  port: "8086"
