@@ -9,8 +9,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     <salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="849f3f73-c7b2-4d32-8f28-3097a952791b">
         <salesforce:basic-connection username="${sfdc.username}" password="${sfdc.password}" securityToken="${sfdc.securityToken}" />
     </salesforce:sfdc-config>
-    <global-property doc:name="Global Property" doc:id="adaac1c4-e2a1-4920-9839-5f18cfbd8354" name="env" value="Sandbox" />
-	<configuration-properties doc:name="Configuration properties" doc:id="47be0f59-fc04-40d8-94e8-5c53543f7548" file="${env}-properties.yaml" />
+    <global-property doc:name="Global Property" doc:id="adaac1c4-e2a1-4920-9839-5f18cfbd8354" name="env" value="Sandbox" />	
 	<flow name="client-revamp-service-api-main">
         <http:listener config-ref="client-revamp-service-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
